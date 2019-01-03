@@ -1,0 +1,71 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: rest-demo-dep
+  labels:
+    app: rest-demo
+spec:
+  selector:
+    matchLabels:
+      app: rest-demo
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: rest-demo
+    spec:
+      containers:
+      - name: rest-demo
+        image: rest-demo:latest
+        imagePullPolicy: Never # get images from local machine
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest-demo-svc
+  #  labels:
+  #  app: rest-demo
+spec:
+  selector:
+    app: rest-demo
+  ports:
+  - port: 8080
+  type: LoadBalancer
+
+
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: ng-demo-dep
+spec:
+  selector:
+    matchLabels:
+      app: ng-demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ng-demo
+    spec:
+      containers:
+      - name: ng-demo
+        image: ng-demo-internal:latest
+        imagePullPolicy: Never
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ng-demo-svc
+spec:
+  selector:
+    app: ng-demo
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+

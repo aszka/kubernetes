@@ -1,0 +1,33 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: ng-demo-internal
+spec:
+  selector:
+    matchLabels:
+      app: ng-demo-internal
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ng-demo-internal
+    spec:
+      containers:
+      - name: ng-demo-internal
+        image: ng-demo-internal:latest
+        imagePullPolicy: Never
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ng-demo-internal
+spec:
+  selector:
+    app: ng-demo-internal
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+

@@ -1,0 +1,36 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: rest-demo-deployment
+  labels:
+    app: rest-demo
+spec:
+  selector:
+    matchLabels:
+      app: rest-demo
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: rest-demo
+    spec:
+      containers:
+      - name: rest-demo
+        image: rest-demo:latest
+        imagePullPolicy: Never # get images from local machine
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest-demo-svc
+  #  labels:
+  #  app: rest-demo
+spec:
+  ports:
+  - port: 8080
+    #   nodePort: 30080
+  selector:
+    app: rest-demo
