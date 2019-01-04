@@ -1,3 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest-demo-svc
+  #labels:
+  #  app: rest-demo
+spec:
+  selector:
+    app: rest-demo
+  ports:
+  - protocol: "TCP"
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+
+---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -20,19 +37,23 @@ spec:
         imagePullPolicy: Never # get images from local machine
         ports:
         - containerPort: 8080
-
+  
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rest-demo-svc
-  #  labels:
-  #  app: rest-demo
+  name: ng-demo-svc
 spec:
   selector:
-    app: rest-demo
+    app: ng-demo # service will apply pod with this name
   ports:
-  - port: 8080
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 80
+      # Port to forward to inside the pod
+      #targetPort: 4200
+      # Port accesiible outside cluster
+      #    nodePort: 30080
   type: LoadBalancer
 
 
@@ -49,23 +70,9 @@ spec:
   template:
     metadata:
       labels:
-        app: ng-demo
+        app: ng-demo # name for the pod
     spec:
       containers:
       - name: ng-demo
-        image: ng-demo-internal:latest
+        image: ng-demo-rest-to-localhost:latest
         imagePullPolicy: Never
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ng-demo-svc
-spec:
-  selector:
-    app: ng-demo
-  ports:
-  - port: 80
-    targetPort: 80
-  type: LoadBalancer
-
